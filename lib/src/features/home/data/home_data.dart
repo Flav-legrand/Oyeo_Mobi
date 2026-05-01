@@ -1,60 +1,81 @@
+import 'package:flutter/material.dart';
+
 import '../domain/product.dart';
 
+class CategoryItem {
+  final IconData icon;
+  final String label;
+
+  const CategoryItem({required this.icon, required this.label});
+}
+
 class HomeData {
-  static const categories = [
-    'Électronique',
-    'Mode',
-    'Maison',
-    'Beauté',
-    'Livres',
-    'Sports',
+  static const tags = [
+    'Offres flash',
+    'Services rapides',
+    'Vendeurs vérifiés',
+  ];
+
+  static const categories = <CategoryItem>[
+    CategoryItem(icon: Icons.phone_iphone, label: 'Électronique'),
+    CategoryItem(icon: Icons.checkroom, label: 'Mode'),
+    CategoryItem(icon: Icons.home, label: 'Maison'),
+    CategoryItem(icon: Icons.kitchen, label: 'Cuisine'),
+    CategoryItem(icon: Icons.brush, label: 'Beauté'),
+    CategoryItem(icon: Icons.menu_book, label: 'Livres'),
   ];
 
   static final featuredProducts = <Product>[
     Product(
-      name: 'Casque sans fil',
-      category: 'Électronique',
-      price: '45 990 F CFA',
-      badge: 'Meilleur Prix',
+      name: 'Caméra de surveillance 4K',
+      category: 'Sécurité · Wi-Fi',
+      price: '149 €',
+      badge: 'Top caméra',
+      rating: '4,7/5',
+      imageAsset: 'assets/images/camera.png',
     ),
     Product(
-      name: 'Montre connectée',
-      category: 'Mode',
-      price: '29 500 F CFA',
-      badge: 'Top vente',
+      name: 'APPLE iPhone 14 128GB',
+      category: 'Reconditionné · Excellent',
+      price: '999 €',
+      badge: 'Promo',
+      rating: '4,0/5',
+      imageAsset: 'assets/images/iphone14.png',
     ),
     Product(
-      name: 'Enceinte Bluetooth',
-      category: 'Électronique',
-      price: '18 200 F CFA',
-      badge: 'Offre',
+      name: 'Friteuse sans huile NINJA • Foodi AF200E',
+      category: 'Reconditionné · Bon plan',
+      price: '179 €',
+      badge: 'Bon plan',
+      rating: '4,8/5',
+      imageAsset: 'assets/images/ninja_airfryer.png',
+    ),
+    Product(
+      name: 'VACTech Balai sans fil',
+      category: 'Reconditionné · Plus réel',
+      price: '129 €',
+      badge: 'Plus réel',
+      rating: '4,5/5',
+      imageAsset: 'assets/images/vactech_broom.png',
     ),
   ];
 
-  static final recommendedProducts = <Product>[
+  static final offersProducts = <Product>[
     Product(
-      name: 'Tapis de yoga',
-      category: 'Sports',
-      price: '9 800 F CFA',
-      badge: 'Nouveau',
+      name: 'Smartphone Samsung Galaxy A54',
+      category: 'Smartphone',
+      price: '329 €',
+      badge: 'Offre',
+      discount: '-24%',
+      imageAsset: 'assets/images/samsung_a54.png',
     ),
     Product(
-      name: 'Lampe bureau LED',
-      category: 'Maison',
-      price: '7 450 F CFA',
-      badge: 'Éco',
-    ),
-    Product(
-      name: 'Rouge à lèvres',
-      category: 'Beauté',
-      price: '3 200 F CFA',
-      badge: 'Choix client',
-    ),
-    Product(
-      name: 'Roman best-seller',
-      category: 'Livres',
-      price: '4 900 F CFA',
-      badge: 'Promo',
+      name: 'Baskets Nike Air Max',
+      category: 'Chaussures',
+      price: '119 €',
+      badge: 'Offre',
+      discount: '-40%',
+      imageAsset: 'assets/images/nike_air_max.png',
     ),
   ];
 }

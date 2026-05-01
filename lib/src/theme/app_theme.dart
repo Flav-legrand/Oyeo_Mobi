@@ -12,7 +12,6 @@ class AppTheme {
     colorScheme: ColorScheme.dark(
       primary: primary,
       secondary: secondary,
-      background: background,
       surface: surface,
     ),
     scaffoldBackgroundColor: background,
