@@ -224,6 +224,50 @@ class HomePage extends StatelessWidget {
                 title: 'Tendances du moment',
                 actionLabel: 'Voir tout',
               ),
+              const SizedBox(height: 16),
+              Builder(
+                builder: (context) {
+                  final trends = [
+                    'Lego',
+                    'Bon plan',
+                    'High-Tech',
+                    'Vêtements',
+                    'Maison',
+                    'Beauté',
+                  ];
+                  return SizedBox(
+                    height: 58,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: trends.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 10),
+                      itemBuilder: (context, index) {
+                        final trend = trends[index];
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF161D31),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.white12, width: 1),
+                          ),
+                          child: Text(
+                            trend,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 20),
               LayoutBuilder(
                 builder: (context, constraints) {
