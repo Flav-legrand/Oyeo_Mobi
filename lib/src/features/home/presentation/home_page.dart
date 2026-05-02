@@ -12,13 +12,18 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final surface = const Color(0xFF101826);
-    final onSurface = Colors.white;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFF0B1322),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            20,
+            16,
+            20 + MediaQuery.of(context).viewInsets.bottom,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -84,7 +89,7 @@ class HomePage extends StatelessWidget {
                             const SizedBox(width: 8),
                             _ActionIcon(icon: Icons.notifications_none),
                           ],
-                        )
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -99,8 +104,8 @@ class HomePage extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'Livrer à : Bacongo',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
+                            style: const TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 0.8),
                               fontSize: 13,
                             ),
                           ),
@@ -118,7 +123,7 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ],
@@ -177,37 +182,62 @@ class HomePage extends StatelessWidget {
                 actionLabel: 'Voir tout',
               ),
               const SizedBox(height: 18),
-              SizedBox(
-                height: 268,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: HomeData.featuredProducts.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 14),
-                  itemBuilder: (context, index) {
-                    final item = HomeData.featuredProducts[index];
-                    return ProductCard(product: item, compact: true);
-                  },
-                ),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final itemWidth = constraints.maxWidth >= 900
+                      ? 220.0
+                      : constraints.maxWidth >= 600
+                      ? 190.0
+                      : 170.0;
+                  final itemHeight = constraints.maxWidth >= 600
+                      ? 280.0
+                      : 260.0;
+                  return SizedBox(
+                    height: itemHeight,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: HomeData.featuredProducts.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 14),
+                      itemBuilder: (context, index) {
+                        final item = HomeData.featuredProducts[index];
+                        return SizedBox(
+                          width: itemWidth,
+                          child: ProductCard(product: item, compact: true),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 40),
-              _SectionHeader(
-                title: 'Offres du jour',
-                actionLabel: 'Voir tout',
-              ),
+              _SectionHeader(title: 'Offres du jour', actionLabel: 'Voir tout'),
               const SizedBox(height: 20),
-              GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: HomeData.offersProducts.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.78,
-                ),
-                itemBuilder: (context, index) {
-                  final item = HomeData.offersProducts[index];
-                  return ProductCard(product: item, offer: true);
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final crossAxisCount = constraints.maxWidth >= 900
+                      ? 4
+                      : constraints.maxWidth >= 700
+                      ? 3
+                      : 2;
+                  final childAspectRatio = constraints.maxWidth >= 700
+                      ? 0.82
+                      : 0.78;
+                  return GridView.builder(
+                    primary: false,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: HomeData.offersProducts.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: childAspectRatio,
+                    ),
+                    itemBuilder: (context, index) {
+                      final item = HomeData.offersProducts[index];
+                      return ProductCard(product: item, offer: true);
+                    },
+                  );
                 },
               ),
             ],
@@ -263,10 +293,7 @@ class _LabelChip extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Colors.white70, fontSize: 12),
           ),
         ],
       ),
@@ -320,10 +347,7 @@ class _PromoCard extends StatelessWidget {
           const SizedBox(height: 14),
           const Text(
             'Retours faciles • Livraison • Prix compétitifs • Vendeurs certifiés',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
           const SizedBox(height: 20),
           Row(
@@ -336,7 +360,10 @@ class _PromoCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 22,
+                    vertical: 14,
+                  ),
                 ),
                 child: const Text('Explorer'),
               ),
@@ -349,12 +376,15 @@ class _PromoCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                   ),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                 ),
                 child: const Text('Voir promotions'),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -380,10 +410,7 @@ class _SectionHeader extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        TextButton(
-          onPressed: () {},
-          child: Text(actionLabel),
-        ),
+        TextButton(onPressed: () {}, child: Text(actionLabel)),
       ],
     );
   }
