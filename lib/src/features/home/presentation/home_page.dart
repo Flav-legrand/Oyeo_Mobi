@@ -6,6 +6,8 @@ import 'widgets/category_list.dart';
 import 'widgets/oye_search_bar.dart';
 import 'widgets/product_card.dart';
 
+import 'package:test1/src/features/home/domain/product.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -269,33 +271,8 @@ class HomePage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  // Calculer le nombre de colonnes selon la largeur
-                  final crossAxisCount = constraints.maxWidth >= 700 ? 3 : 2;
-
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(8),
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: HomeData.offersProducts.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.72,
-                    ),
-                    itemBuilder: (context, index) {
-                      final item = HomeData.offersProducts[index];
-                      return ProductCard(
-                        product: item,
-                        compact: true,  // ✅ Mode compact activé
-                        offer: true,
-                      );
-                    },
-                  );
-                },
-              ),
+              _PagedOffersGrid(),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -467,6 +444,144 @@ class _SectionHeader extends StatelessWidget {
           ),
         ),
         TextButton(onPressed: () {}, child: Text(actionLabel)),
+      ],
+    );
+  }
+}
+// ============================================================
+// WIDGET : PAGEVIEW 2x2 POUR LES OFFRES (SCROLL HORIZONTAL)
+// ============================================================
+class _PagedOffersGrid extends StatefulWidget {
+  @override
+  State<_PagedOffersGrid> createState() => _PagedOffersGridState();
+}
+
+class _PagedOffersGridState extends State<_PagedOffersGrid> {
+  late final PageController _pageController;
+  int _currentPage = 0;
+  late final List<List<Product>> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+
+    // Grouper les produits par lots de 4 (2x2)
+    _pages = [];
+    for (int i = 0; i < HomeData.offersProducts.length; i += 4) {
+      final end = i + 4;
+      if (end <= HomeData.offersProducts.length) {
+        _pages.add(HomeData.offersProducts.sublist(i, end));
+      } else {
+        _pages.add(HomeData.offersProducts.sublist(i, HomeData.offersProducts.length));
+      }
+    }
+
+    // Écouter les changements de page
+    _pageController.addListener(() {
+      final newPage = _pageController.page?.round() ?? 0;
+      if (newPage != _currentPage) {
+        setState(() {
+          _currentPage = newPage;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_pages.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Titre de la section
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Offres spéciales',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                'Voir tout →',
+                style: TextStyle(
+                  color: Color(0xFFF95F00),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // PageView pour le scroll horizontal page par page
+        SizedBox(
+          height: 400,
+          child: PageView.builder(
+            controller: _pageController,
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: _pages.length,
+            itemBuilder: (context, pageIndex) {
+              final pageProducts = _pages[pageIndex];
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.72,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  children: pageProducts.map((product) {
+                    return ProductCard(
+                      product: product,
+                      compact: true,
+                      offer: true,
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+        ),
+
+        // Indicateur de page (dots)
+        if (_pages.length > 1)
+          Container(
+            margin: const EdgeInsets.only(top: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(_pages.length, (index) {
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: _currentPage == index ? 20 : 8,
+                  height: 8,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: _currentPage == index
+                        ? const Color(0xFFF95F00)
+                        : Colors.white24,
+                  ),
+                );
+              }),
+            ),
+          ),
       ],
     );
   }

@@ -35,11 +35,16 @@ class ProductCard extends StatelessWidget {
                 : null,
           ),
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          // ✅ CORRECTION : Remplacement de Column par ListView
+          child: ListView(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              // Section badge + favori
+              Wrap(  // ← On remplace Row par Wrap
+                alignment: WrapAlignment.spaceBetween,  // ← Espace entre les éléments
+                crossAxisAlignment: WrapCrossAlignment.start,
                 children: [
                   _BadgeChip(
                     label: product.discount ?? product.badge,
@@ -47,7 +52,6 @@ class ProductCard extends StatelessWidget {
                         ? const Color(0xFFB91C1C)
                         : const Color(0xFF3B82F6),
                   ),
-                  const Spacer(),
                   if (offer)
                     Container(
                       width: 32,
@@ -65,6 +69,8 @@ class ProductCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
+
+              // Image
               Container(
                 height: imageHeight,
                 decoration: BoxDecoration(
@@ -81,6 +87,8 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 14),
+
+              // Nom du produit
               Text(
                 product.name,
                 maxLines: compact ? 2 : 3,
@@ -93,6 +101,8 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
+
+              // Catégorie
               Text(
                 product.category.toUpperCase(),
                 maxLines: 1,
@@ -105,6 +115,8 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
+
+              // Évaluation (si existante)
               if (product.rating != null)
                 Row(
                   children: [
@@ -119,7 +131,10 @@ class ProductCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              const Spacer(),
+
+              const SizedBox(height: 12),
+
+              // Section prix + bouton ajouter
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -136,9 +151,9 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                       if (product.discount != null)
-                        Text(
+                        const Text(
                           'Prix réduit',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Color.fromRGBO(255, 255, 255, 0.7),
                             fontSize: 11,
                           ),
@@ -155,6 +170,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 8),
             ],
           ),
         );
