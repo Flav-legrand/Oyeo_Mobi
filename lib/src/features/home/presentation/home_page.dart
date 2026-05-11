@@ -273,6 +273,9 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 20),
               _PagedOffersGrid(),
               const SizedBox(height: 40),
+              const SizedBox(height: 20),
+              _QuickAccessSection(),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -529,7 +532,7 @@ class _PagedOffersGridState extends State<_PagedOffersGrid> {
 
         // PageView pour le scroll horizontal page par page
         SizedBox(
-          height: 400,
+          height: 480,
           child: PageView.builder(
             controller: _pageController,
             scrollDirection: Axis.horizontal,
@@ -586,3 +589,217 @@ class _PagedOffersGridState extends State<_PagedOffersGrid> {
     );
   }
 }
+
+class _QuickAccessSection extends StatefulWidget {
+  const _QuickAccessSection();
+
+  @override
+  State<_QuickAccessSection> createState() => _QuickAccessSectionState();
+}
+
+class _QuickAccessSectionState extends State<_QuickAccessSection> {
+  int _selectedIndex = 1; // Catégories est sélectionné par défaut
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryItems = [
+      ('Votre espace', Icons.person_outline),
+      ('Catégories', Icons.category_outlined),
+      ('Marques', Icons.storefront_outlined),
+    ];
+
+    // Images différentes selon la sélection
+    final imagesByCategory = {
+      0: [ // Votre espace
+        ('Favoris', 'assets/images/nike_air_max.png'),
+        ('Panier', 'assets/images/samsung_a54.png'),
+        ('Commandes', 'assets/images/ninja_airfryer.png'),
+        ('Profil', 'assets/images/vactech_broom.png'),
+      ],
+      1: [ // Catégories
+        ('Salon', 'assets/images/vos acces rapide.png'),
+        ('Chambre', 'assets/images/vos acces rapide.png'),
+        ('Mode femme', 'assets/images/vos acces rapide.png'),
+        ('Denim', 'assets/images/vos acces rapide.png'),
+      ],
+      2: [ // Marques
+        ('Nike', 'assets/images/nike_air_max.png'),
+        ('Samsung', 'assets/images/samsung_a54.png'),
+        ('Ninja', 'assets/images/ninja_airfryer.png'),
+        ('VacTech', 'assets/images/vactech_broom.png'),
+      ],
+    };
+
+    final secondaryItems = imagesByCategory[_selectedIndex] ?? imagesByCategory[0]!;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF101826),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Vos accès rapides',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Primary chips row
+          Row(
+            children: List.generate(primaryItems.length, (index) {
+              final (label, icon) = primaryItems[index];
+              final isSelected = _selectedIndex == index;
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _selectedIndex = index),
+                  child: _PrimaryAccessChip(
+                    icon: icon,
+                    label: label,
+                    isSelected: isSelected,
+                  ),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 12),
+          // Secondary chips with images
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(secondaryItems.length, (index) {
+                final (label, image) = secondaryItems[index];
+                return Padding(
+                  padding: EdgeInsets.only(right: index < secondaryItems.length - 1 ? 10 : 0),
+                  child: _SecondaryAccessChip(
+                    label: label,
+                    imagePath: image,
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PrimaryAccessChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+
+  const _PrimaryAccessChip({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFF1A1A1A) : const Color(0xFF1A2A3A),
+        borderRadius: BorderRadius.circular(20),
+        border: isSelected ? null : Border.all(color: Colors.white12, width: 0.5),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 18, color: Colors.white70),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.white70,
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SecondaryAccessChip extends StatelessWidget {
+  final String label;
+  final String imagePath;
+
+  const _SecondaryAccessChip({
+    required this.label,
+    required this.imagePath,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Image de fond
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: const Color(0xFF161D31),
+                  child: const Center(
+                    child: Icon(Icons.image_not_supported, color: Colors.grey),
+                  ),
+                );
+              },
+            ),
+            // Overlay avec le label
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black.withValues(alpha: 0.7)],
+                  ),
+                ),
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
