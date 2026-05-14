@@ -721,26 +721,80 @@ class _QuickAccessSectionState extends State<_QuickAccessSection> {
             }),
           ),
           const SizedBox(height: 12),
-          // Secondary chips with images
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(secondaryItems.length, (index) {
-                final item = secondaryItems[index];
-                return Padding(
-                  padding: EdgeInsets.only(right: index < secondaryItems.length - 1 ? 10 : 0),
-                  child: _SecondaryAccessChip(
-                    label: item.label,
-                    imagePath: item.imagePath,
-                    discount: item.discount,
-                    price: item.price,
-                    originalPrice: item.originalPrice,
-                    timeLabel: item.timeLabel,
-                  ),
-                );
-              }),
+          // Super Marché: grille de catégories + bouton d'action
+          if (_selectedIndex == 1) ...[
+            GridView.count(
+              crossAxisCount: 3,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 1,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              children: [
+                _SuperMarketCategoryCard(
+                  label: 'Épicerie',
+                  imagePath: 'assets/images/Super Marché.png',
+                ),
+                _SuperMarketCategoryCard(
+                  label: 'Boissons',
+                  imagePath: 'assets/images/Super Marché.png',
+                ),
+                _SuperMarketCategoryCard(
+                  label: 'Viandes',
+                  imagePath: 'assets/images/Super Marché.png',
+                ),
+                _SuperMarketCategoryCard(
+                  label: 'Fruits',
+                  imagePath: 'assets/images/Super Marché.png',
+                ),
+                _SuperMarketCategoryCard(
+                  label: 'Hygiène',
+                  imagePath: 'assets/images/Super Marché.png',
+                ),
+                _SuperMarketCategoryCard(
+                  label: 'Bébé',
+                  imagePath: 'assets/images/Super Marché.png',
+                ),
+              ],
             ),
-          ),
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.shopping_cart_outlined),
+                label: const Text('Faire mes courses'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2563EB),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+              ),
+            ),
+          ] else ...[
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(secondaryItems.length, (index) {
+                  final item = secondaryItems[index];
+                  return Padding(
+                    padding: EdgeInsets.only(right: index < secondaryItems.length - 1 ? 10 : 0),
+                    child: _SecondaryAccessChip(
+                      label: item.label,
+                      imagePath: item.imagePath,
+                      discount: item.discount,
+                      price: item.price,
+                      originalPrice: item.originalPrice,
+                      timeLabel: item.timeLabel,
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -802,6 +856,65 @@ class _PrimaryAccessChip extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SuperMarketCategoryCard extends StatelessWidget {
+  final String label;
+  final String imagePath;
+
+  const _SuperMarketCategoryCard({
+    required this.label,
+    required this.imagePath,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: const Color(0xFF161D31),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: const Color(0xFF161D31),
+                );
+              },
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 10,
+              right: 10,
+              bottom: 10,
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
