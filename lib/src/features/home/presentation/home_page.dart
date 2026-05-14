@@ -536,7 +536,6 @@ class _PagedOffersGridState extends State<_PagedOffersGrid> {
         // PageView pour le scroll horizontal page par page
         SizedBox(
           height: 480,
-          height: 480,
           child: PageView.builder(
             controller: _pageController,
             scrollDirection: Axis.horizontal,
